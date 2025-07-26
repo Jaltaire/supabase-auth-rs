@@ -5,6 +5,7 @@ use reqwest::{Client, Url};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::{collections::HashMap, fmt::Display};
+use schemars::JsonSchema;
 use uuid::Uuid;
 
 /// Supabase Auth Client
@@ -20,7 +21,7 @@ pub struct AuthClient {
     pub(crate) jwt_secret: String,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct Session {
     /// The oauth provider token. If present, this can be used to make external API requests to the oauth provider used.
     pub provider_token: Option<String>,
@@ -41,7 +42,7 @@ pub struct Session {
 }
 
 /// User respresents a registered user
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct User {
     pub id: Uuid,
     pub aud: String,
@@ -70,7 +71,7 @@ pub struct User {
     pub is_anonymous: bool,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Default)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
 pub struct AppMetadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub provider: Option<String>,
@@ -78,7 +79,7 @@ pub struct AppMetadata {
     pub providers: Option<Vec<String>>,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Default)]
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
 pub struct UserMetadata {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -117,7 +118,7 @@ pub struct EmailSignUpConfirmation {
     pub is_anonymous: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct IdTokenCredentials {
     /// Provider name or OIDC `iss` value identifying which provider should be used to verify the provided token.
     pub provider: Provider,
@@ -146,13 +147,13 @@ pub struct OAuthResponse {
     pub provider: Provider,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct GotrueMetaSecurity {
     /// Verification token received when the user completes the captcha on the site.
     captcha_token: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct Identity {
     pub identity_id: String,
     pub id: String,
@@ -166,7 +167,7 @@ pub struct Identity {
     pub email: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct IdentityData {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
@@ -175,25 +176,25 @@ pub struct IdentityData {
     pub sub: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub enum LoginOptions {
     Email(String),
     Phone(String),
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct LoginWithEmailAndPasswordPayload<'a> {
     pub(crate) email: &'a str,
     pub(crate) password: &'a str,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct LoginWithPhoneAndPasswordPayload<'a> {
     pub(crate) phone: &'a str,
     pub(crate) password: &'a str,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct SignUpWithEmailAndPasswordPayload<'a> {
     pub(crate) email: &'a str,
     pub(crate) password: &'a str,
@@ -202,7 +203,7 @@ pub(crate) struct SignUpWithEmailAndPasswordPayload<'a> {
     pub(crate) options: Option<SignUpWithPasswordOptions>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct SignUpWithPhoneAndPasswordPayload<'a> {
     pub(crate) phone: &'a str,
     pub(crate) password: &'a str,
@@ -211,14 +212,14 @@ pub(crate) struct SignUpWithPhoneAndPasswordPayload<'a> {
     pub(crate) options: Option<SignUpWithPasswordOptions>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct LoginAnonymouslyPayload {
     #[serde(flatten)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) options: Option<LoginAnonymouslyOptions>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct SignUpWithPasswordOptions {
     /// The redirect url embedded in the email link
     #[serde(skip)]
@@ -231,7 +232,7 @@ pub struct SignUpWithPasswordOptions {
     pub captcha_token: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct ResetPasswordOptions {
     /// The redirect url embedded in the email link
     #[serde(skip)]
@@ -241,7 +242,7 @@ pub struct ResetPasswordOptions {
     pub captcha_token: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct LoginAnonymouslyOptions {
     /// The `data` should be a JSON object that includes user-specific info, such as their first and last name.
     pub data: Option<Value>,
@@ -249,30 +250,30 @@ pub struct LoginAnonymouslyOptions {
     pub captcha_token: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct RequestMagicLinkPayload<'a> {
     pub(crate) email: &'a str,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct UpdatedUser {
     pub email: Option<String>,
     pub password: Option<String>,
     pub data: Option<serde_json::Value>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub(crate) struct SendSMSOtpPayload<'a> {
     pub phone: &'a str,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct OTPResponse {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message_id: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(untagged)]
 pub enum VerifyOtpParams {
     Mobile(VerifyMobileOtpParams),
@@ -280,7 +281,7 @@ pub enum VerifyOtpParams {
     TokenHash(VerifyTokenHashParams),
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct VerifyMobileOtpParams {
     /// The user's phone number.
     pub phone: String,
@@ -294,7 +295,7 @@ pub struct VerifyMobileOtpParams {
     pub options: Option<VerifyOtpOptions>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct VerifyEmailOtpParams {
     /// The user's email.
     pub email: String,
@@ -308,7 +309,7 @@ pub struct VerifyEmailOtpParams {
     pub options: Option<VerifyOtpOptions>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct VerifyTokenHashParams {
     /// The user's phone number.
     pub token_hash: String,
@@ -317,7 +318,7 @@ pub struct VerifyTokenHashParams {
     pub otp_type: OtpType,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum OtpType {
     #[default]
@@ -331,14 +332,14 @@ pub enum OtpType {
     Recovery,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct VerifyOtpOptions {
     /// A URL to send the user to after they are confirmed.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub redirect_to: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Default)]
+#[derive(Debug, Serialize, Deserialize, JsonSchema, PartialEq, Default)]
 pub(crate) struct LoginWithEmailOtpPayload<'a> {
     pub email: &'a str,
     #[serde(flatten)]
@@ -347,7 +348,7 @@ pub(crate) struct LoginWithEmailOtpPayload<'a> {
 }
 
 // align json field's name with https://github.com/supabase/auth/blob/1f7de6c65f31ef0bbb80899369989b13ab5a517f/openapi.yaml#L559
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct LoginEmailOtpParams {
     /// Verification token received when the user completes the captcha on the site.
     pub captcha_token: Option<String>,
@@ -361,7 +362,7 @@ pub struct LoginEmailOtpParams {
 }
 
 // align json field's name with https://github.com/supabase/auth/blob/1f7de6c65f31ef0bbb80899369989b13ab5a517f/openapi.yaml#L559
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct LoginMobileOtpParams {
     /// Verification token received when the user completes the captcha on the site.
     pub captcha_token: Option<String>,
@@ -374,18 +375,18 @@ pub struct LoginMobileOtpParams {
     pub should_create_user: Option<bool>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub(crate) struct RefreshSessionPayload<'a> {
     pub refresh_token: &'a str,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub(crate) struct ExchangeCodeForSessionPayload<'a> {
     pub auth_code: &'a str,
     pub code_verifier: &'a str,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub(crate) struct ResetPasswordForEmailPayload {
     pub email: String,
     #[serde(flatten)]
@@ -393,7 +394,7 @@ pub(crate) struct ResetPasswordForEmailPayload {
     pub(crate) options: Option<ResetPasswordOptions>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct ResendParams {
     #[serde(rename = "type")]
     pub otp_type: OtpType,
@@ -403,19 +404,19 @@ pub struct ResendParams {
     pub options: Option<DesktopResendOptions>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct InviteParams {
     pub email: String,
     pub data: Option<Value>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct DesktopResendOptions {
     pub email_redirect_to: Option<String>,
     pub captcha_token: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct MobileResendParams {
     #[serde(rename = "type")]
     pub otp_type: OtpType,
@@ -425,12 +426,12 @@ pub struct MobileResendParams {
     pub options: Option<MobileResendOptions>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct MobileResendOptions {
     captcha_token: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Channel {
     #[default]
@@ -448,7 +449,7 @@ impl Display for Channel {
 }
 
 /// Health status of the Auth Server
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct AuthServerHealth {
     /// Version of the service
     pub version: String,
@@ -459,7 +460,7 @@ pub struct AuthServerHealth {
 }
 
 /// Settings of the Auth Server
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct AuthServerSettings {
     pub external: External,
     pub disable_signup: bool,
@@ -469,7 +470,7 @@ pub struct AuthServerSettings {
     pub saml_enabled: bool,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 pub struct External {
     pub anonymous_users: bool,
     pub apple: bool,
@@ -498,7 +499,7 @@ pub struct External {
     pub zoom: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 /// Currently enabled OAuth providers.
 ///
@@ -562,7 +563,7 @@ impl Display for Provider {
 }
 
 /// Represents the scope of the logout operation
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum LogoutScope {
     #[default]
@@ -571,7 +572,7 @@ pub enum LogoutScope {
     Others,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct LoginWithSSO {
     #[serde(skip_serializing_if = "Option::is_none")]
     /// UUID of the SSO provider to invoke single-sign on to
@@ -583,7 +584,7 @@ pub struct LoginWithSSO {
     pub options: Option<SSOLoginOptions>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct SSOLoginOptions {
     #[serde(skip_serializing_if = "Option::is_none")]
     /// Verification token received when the user completes the captcha on the site.
@@ -593,7 +594,7 @@ pub struct SSOLoginOptions {
     redirect_to: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct SSOSuccess {
     /// URL to open in a browser which will complete the sign-in flow by
     /// taking the user to the identity provider's authentication flow.
@@ -605,7 +606,7 @@ pub struct SSOSuccess {
     pub headers: Headers,
 }
 
-#[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 pub struct Headers {
     pub date: String,
     #[serde(rename = "content-type")]
