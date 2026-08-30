@@ -51,8 +51,17 @@ impl AuthClient {
         api_key: impl Into<String>,
         jwt_secret: impl Into<String>,
     ) -> Self {
+        Self::with_client(project_url, api_key, jwt_secret, Client::new())
+    }
+
+    pub fn with_client(
+        project_url: impl Into<String>,
+        api_key: impl Into<String>,
+        jwt_secret: impl Into<String>,
+        client: Client,
+    ) -> Self {
         AuthClient {
-            client: Client::new(),
+            client,
             project_url: project_url.into(),
             api_key: api_key.into(),
             jwt_secret: jwt_secret.into(),
@@ -1281,5 +1290,57 @@ impl AuthClient {
     /// Get the JWT Secret from an AuthClient
     pub fn jwt_secret(&self) -> &str {
         &self.jwt_secret
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use reqwest::header::{HeaderMap, HeaderValue};
+
+    use super::*;
+
+    #[tokio::test]
+    async fn an_explicit_http_client_is_retained() {
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            let mut request = vec![0; 4096];
+            let read = stream.read(&mut request).await.unwrap();
+            stream
+                .write_all(b"HTTP/1.1 204 No Content\r\nContent-Length: 0\r\n\r\n")
+                .await
+                .unwrap();
+            String::from_utf8(request[..read].to_vec()).unwrap()
+        });
+        let mut headers = HeaderMap::new();
+        headers.insert("x-test-client", HeaderValue::from_static("selected"));
+        let client = Client::builder().default_headers(headers).build().unwrap();
+        let auth = AuthClient::with_client("https://example.com", "key", "secret", client);
+        auth.client
+            .get(format!("http://{address}"))
+            .send()
+            .await
+            .unwrap();
+        let request = server.await.unwrap();
+        assert!(request.contains("x-test-client: selected"));
+        assert_eq!(auth.project_url, "https://example.com");
+        assert_eq!(auth.api_key, "key");
+        assert_eq!(auth.jwt_secret, "secret");
+    }
+
+    #[test]
+    fn the_default_constructor_still_creates_a_client() {
+        let auth = AuthClient::new("https://example.com", "key", "secret");
+        assert!(auth
+            .client
+            .get("https://example.com")
+            .build()
+            .unwrap()
+            .headers()
+            .get("x-test-client")
+            .is_none());
     }
 }
